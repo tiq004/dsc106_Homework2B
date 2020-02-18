@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat%7CPaytone+One&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.1/build/pure-min.css"
+        integrity="sha384-oAOxQR6DkCoMliIh8yFnu25d7Eq/PHS21PClpwjOTeU2jRSq11vu66rf90/cZr47" crossorigin="anonymous">
+    <script src="https://d3js.org/d3.v4.js"></script>
+    <link rel="stylesheet" href="hw2_style.css">
+    <title>Tianran's Dingus & Widget</title>
+    <meta charset="UTF-8">
+</head>
+
+<body onload="ok(); tmd(); okk()">
+    <main>
+        <div class="header">
+            <img src="logo.png" alt="logo" />
+            <header>
+                <h1>Global Dashboard</h1>
+            </header>
+        </div>
+
+        <hr>
+
+        <div class="container">
+            <div class='column'>
+                <h3>Dingus</h3>
+                <p id="dingus">3</p>
+            </div>
+            <div class='column'>
+                <h3>Widget</h3>
+                <p id="widget">3</p>
+            </div>
+            <div class='column'>
+                <h3>Sales</h3>
+                <p>
+                    <span style='color:green'>$</span>
+                    <span id="tot" style='color:blue'>72.72</span>
+                </p>
+            </div>
+        </div>
+        <hr>
+
+        <div class="charts">
+            <div id="my_dataviz" ></div>
+            <svg id="bar_data" width=500 height=300 ></svg>
+    
+        </div>
+        
+        <script>
+            var width = 450
+            height = 600
+            margin = 40
+            var radius = Math.min(width, height) / 2 - margin
+            var svg = d3.select("#my_dataviz")
+                .append("svg")
+                .attr("width", width)
+                .attr("height", height)
+                .append("g")
+                .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+            var data = { Dingus: 3, Widget: 3 }
+
+            var color = d3.scaleOrdinal()
+                .domain(data)
+                .range(["#98abc5", "#a05d56"])
+
+            var pie = d3.pie()
+                .value(function (d) { return d.value; })
+            var data_ready = pie(d3.entries(data))
+
+            svg
+                .selectAll('whatever')
+                .data(data_ready)
+                .enter()
+                .append('path')
+                .attr('d', d3.arc()
+                    .innerRadius(0)
+                    .outerRadius(radius)
+                )
+                .attr('fill', function (d) { return (color(d.data.key)) })
+                .attr("stroke", "black")
+                .style("stroke-width", "2px")
+                .style("opacity", 1)
+            var arcGenerator = d3.arc()
+                .innerRadius(0)
+                .outerRadius(radius)
+
+            svg
+                .selectAll('whatever')
+                .data(data_ready)
+                .enter()
+                .append('path')
+                .attr('d', d3.arc()
+                    .innerRadius(0)
+                    .outerRadius(radius)
+                )
+                .attr('fill', function (d) { return (color(d.data.key)) })
+                .attr("stroke", "black")
+                .style("stroke-width", "2px")
+                .style("opacity", 1)
+
+            svg
+                .selectAll('mySlices')
+                .data(data_ready)
+                .enter()
+                .append('text')
+                .text(function (d) { return "# of " + d.data.key + ": " + d.value })
+                .attr("transform", function (d) { return "translate(" + arcGenerator.centroid(d) + ")"; })
+                .style("text-anchor", "middle")
+                .style("font-size", 15)
+
+            svg.append("text")
+                .attr("x", (0))
+                .attr("y", -250)
+                .attr("text-anchor", "middle")
+                .style("font-size", "16px")
+                .text("Dingus and Widget Sale Ratio");
+            var legend = svg.selectAll('.legend')
+                .data(color.domain())
+                .enter()
+                .append('g')
+                .attr('class', 'legend')
+                .attr('transform', function (d, i) {
+                    var height = legendRectSize + legendSpacing;
+                    var offset = height * color.domain().length / 2;
+                    var horz = 8 * legendRectSize;
+                    var vert = -i * height - offset - 160;
+                    return 'translate(' + horz + ',' + vert + ')';
+                });
+
+            legend.append('rect')
+                .attr('width', legendRectSize)
+                .attr('height', legendRectSize)
+                .style('fill', color)
+                .style('stroke', color);
+
+            legend.append('text')
+                .attr('x', legendRectSize + legendSpacing)
+                .attr('y', legendRectSize - legendSpacing)
+                .text(function (d) { return d; });
+
+
+
+            function tmd() {
+                d3.select("svg").remove();
+                var width = 450
+                height = 450
+                margin = 40
+                var legendRectSize = 18;
+                var legendSpacing = 4;
+
+                var radius = Math.min(width, height) / 2 - margin;
+                var svg = d3.select("#my_dataviz")
+                    .append("svg")
+                    .attr("width", width)
+                    .attr("height", height)
+                    .append("g")
+                    .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+                var data = { Dingus: Number(document.getElementById("dingus").innerHTML), Widget: Number(document.getElementById("widget").innerHTML) }
+
+                var color = d3.scaleOrdinal()
+                    .domain(data)
+                    .range(["#98abc5", "#a05d56"])
+
+                var pie = d3.pie()
+                    .value(function (d) { return d.value; })
+                var data_ready = pie(d3.entries(data))
+
+                svg
+                    .selectAll('whatever')
+                    .data(data_ready)
+                    .enter()
+                    .append('path')
+                    .attr('d', d3.arc()
+                        .innerRadius(0)
+                        .outerRadius(radius)
+                    )
+                    .attr('fill', function (d) { return (color(d.data.key)) })
+                    .attr("stroke", "black")
+                    .style("stroke-width", "2px")
+                    .style("opacity", 1)
+                var arcGenerator = d3.arc()
+                    .innerRadius(0)
+                    .outerRadius(radius)
+
+
+                svg
+                    .selectAll('whatever')
+                    .data(data_ready)
+                    .enter()
+                    .append('path')
+                    .attr('d', d3.arc()
+                        .innerRadius(0)
+                        .outerRadius(radius)
+                    )
+                    .attr('fill', function (d) { return (color(d.data.key)) })
+                    .attr("stroke", "black")
+                    .style("stroke-width", "2px")
+                    .style("opacity", 1)
+
+                svg
+                    .selectAll('mySlices')
+                    .data(data_ready)
+                    .enter()
+                    .append('text')
+                    .text(function (d) { return "# of " + d.data.key + ": " + d.value })
+                    .attr("transform", function (d) { return "translate(" + arcGenerator.centroid(d) + ")"; })
+                    .style("text-anchor", "middle")
+                    .style("font-size", 15)
+
+                svg.append("text")
+                    .attr("x", (0))
+                    .attr("y", -250)
+                    .attr("text-anchor", "middle")
+                    .style("font-size", "16px")
+                    .text("Dingus and Widget Sale Ratio");
+
+                var legend = svg.selectAll('.legend')                     // NEW
+                    .data(color.domain())                                   // NEW
+                    .enter()                                                // NEW
+                    .append('g')                                            // NEW
+                    .attr('class', 'legend')                                // NEW
+                    .attr('transform', function (d, i) {                     // NEW
+                        var height = legendRectSize + legendSpacing;          // NEW
+                        var offset = height * color.domain().length / 2;     // NEW
+                        var horz = 8 * legendRectSize;                       // NEW
+                        var vert = -i * height - offset - 160;                       // NEW
+                        return 'translate(' + horz + ',' + vert + ')';        // NEW
+                    });                                                     // NEW
+
+                legend.append('rect')                                     // NEW
+                    .attr('width', legendRectSize)                          // NEW
+                    .attr('height', legendRectSize)                         // NEW
+                    .style('fill', color)                                   // NEW
+                    .style('stroke', color);                                // NEW
+
+                legend.append('text')                                     // NEW
+                    .attr('x', legendRectSize + legendSpacing)              // NEW
+                    .attr('y', legendRectSize - legendSpacing)              // NEW
+                    .text(function (d) { return d; });
+
+                    loader = JSON.parse(localStorage["orderHistory"]);
+            let history = loader.orderHistory;
+            var data = [[1, '01/01/2020', 1, 1], [2, '01/02/2020', 2, 2]];
+            for (var i = 0; i < history.length; i++) {
+                data.push(history[i]);
+            }
+            if (data.length > 7) {
+                data = data.slice(data.length - 7, data.length);
+            }
+
+            bar_data = [];
+            for (var i = 0; i < data.length; i++) {
+                let dict = {};
+                dict['ID'] = Number(data[i][0]);
+                dict['dingus'] = Number(data[i][2]);
+                dict['widget'] = Number(data[i][3]);
+                bar_data.push(dict);
+            }
+            //document.getElementById("demo").innerHTML = bar_data[0]["ID"];
+            
+            
+           
+            var svg = d3.select("svg"),
+                margin = { top: 10, right: 20, bottom: 20, left: 40 },
+                width = +svg.attr("width") - margin.left - margin.right,
+                height = +svg.attr("height") - margin.top - margin.bottom,
+                g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+            var x = d3.scaleBand()
+                .rangeRound([0, width])
+                .padding(0.3)
+                .align(0.3);
+
+            var y = d3.scaleLinear()
+                .rangeRound([height, 0]);
+
+            var z = d3.scaleOrdinal(['#ff5050', '#668cff']);
+
+
+            var columns = d3.keys(bar_data[0]);
+
+            var keys = columns.slice(1, 3);
+
+
+            x.domain(bar_data.map(function (d, i) { return i }));
+            y.domain([0, d3.max(bar_data, function (d) { return d.widget + d.dingus; })]).nice();
+            z.domain(keys);
+
+            g.append("g")
+                .selectAll("g")
+                .data(d3.stack().keys(keys)(bar_data))
+                .enter().append("g")
+                .attr("fill", function (d) { return z(d.key); })
+                .selectAll("rect")
+                .data(function (d) { return d; })
+                .enter().append("rect")
+                .attr("x", function (d, i) { return x(i); })
+                .attr("y", function (d) { return y(d[1]); })
+                .attr("height", function (d) { return y(d[0]) - y(d[1]); })
+                .attr("width", x.bandwidth());
+
+            g.append("g")
+                .attr("class", "axis")
+                .attr("transform", "translate(0," + height + ")")
+                .call(d3.axisBottom(x).tickFormat(function (d, i) { return bar_data[i].ID }));
+
+            g.append("g")
+                .attr("class", "axis")
+                .call(d3.axisLeft(y).ticks(null, "s"))
+                .append("text")
+                .attr("x", 2)
+                .attr("y", y(y.ticks().pop()) + 0.5)
+                .attr("dy", "0.32em")
+                .attr("fill", "#000")
+                .attr("font-weight", "bold")
+                .attr("text-anchor", "start")
+                .attr("font-size", "18px")
+                .text("Number of Dingus/widget");
+
+            var legend = g.append("g")
+                .attr("font-family", "sans-serif")
+                .attr("font-size", 10)
+                .attr("text-anchor", "end")
+                .selectAll("g")
+                .data(keys.slice().reverse())
+                .enter().append("g")
+                .attr("transform", function (d, i) { return "translate(0," + i * 20 + ")"; });
+
+            legend.append("rect")
+                .attr("x", width - 19)
+                .attr("width", 19)
+                .attr("height", 19)
+                .attr("fill", z);
+
+            legend.append("text")
+                .attr("x", width - 24)
+                .attr("y", 9.5)
+                .attr("dy", "0.32em")
+                .text(function (d) { return d; });
+
+            }
+
+            function wtf() {
+                loader = JSON.parse(localStorage["orderHistory"]);
+                let history = loader.orderHistory;
+                var data = [[1, '01/01/2020', 1, 1], [2, '01/02/2020', 2, 2]];
+                for (var i = 0; i < history.length; i++) {
+                    data.push(history[i]);
+                }
+                if (data.length > 7) {
+                    data = data.slice(data.length - 7, data.length);
+                }
+                var item = [];
+                var one = [];
+                var two = [];
+                for (let i = 0; i < data.length; i++) {
+                    item.push(data[i][0]);
+                    one.push(Number(data[i][2]));
+                    two.push(Number(data[i][3]));
+                }
+            }
+
+            function okk() {
+
+                let tot_dingus = Number(document.getElementById("dingus").innerHTML);
+                let tot_widget = Number(document.getElementById("widget").innerHTML);
+                let tot_num = tot_dingus + tot_widget;
+
+                let circum = 130 * 3.14
+                let k = circum / tot_num;
+                let circle_dingus = document.getElementById("dinp");
+                let circle_widget = document.getElementById("widp");
+
+                let dingus_dash = tot_dingus / tot_num * circum + ' ' + (circum - tot_dingus / tot_num * circum);
+                let widget_dash = tot_widget / tot_num * circum + ' ' + (circum - tot_widget / tot_num * circum);
+                circle_widget.style.strokeDasharray = widget_dash;
+                let dinc = document.getElementById("dinc");
+                let widc = document.getElementById("widc");
+                dinc.innerHTML = (tot_dingus / tot_num * 100).toFixed(2) + "%";
+                widc.innerHTML = (tot_widget / tot_num * 100).toFixed(2) + "%";
+            }
+
+
+        </script>
+
+
+        <table id="myTable" class="tg">
+            <caption>Order History</caption>
+            <tr>
+                <th class="tg-6qw1" rowspan="2">ID#</th>
+                <th class="tg-baqh" rowspan="2">Date</th>
+                <th class="tg-baqh" colspan="2">Quantity</th>
+                <th class="tg-baqh" rowspan="2">Total</th>
+            </tr>
+            <tr>
+                <th class="tg-baqh">Dingus</th>
+                <th class="tg-baqh">Widget</th>
+            </tr>
+            <tbody>
+            </tbody>
+
+            <script>
+                // Constants
+                //localStorage.clear()
+                const DINGUS_PRICE = 14.25;
+                const WIDGET_PRICE = 9.99;
+                const ZERO_FORMAT = '0.00';
+                const DEBUG = true; // Where might this flag be used? (It's not mandatory)
+
+                // Global store (What else would you need here?)
+                let store = {
+                    orderHistory: []
+                };
+
+                function generateEntries() {
+                    // Returns an orderHistory array
+                    // [ID#, Date, Dingus quantity, Widget quantity]
+                    return [
+                        [1, '01/01/2020', 1, 1],
+                        [2, '01/02/2020', 2, 2]
+                    ]
+                }
+                var result = generateEntries();
+                var table = document.getElementById("myTable");
+                var counter = 2;
+                var din = 0;
+                var wid = 0;
+                var total = 0;
+                var id;
+                function insert(result) {
+                    var i;
+                    for (i = 0; i < result.length; i++) {
+                        var di = result[i][2];
+                        var wi = result[i][3];
+                        id = counter - 1
+                        var row = table.insertRow(counter);
+                        var c1 = row.insertCell(0);
+                        var c2 = row.insertCell(1);
+                        var c3 = row.insertCell(2);
+                        var c4 = row.insertCell(3);
+                        var c5 = row.insertCell(4);
+                        c1.style.backgroundColor = "#b6b3b3";
+                        c1.innerHTML = id;
+                        c2.innerHTML = result[i][1];
+                        c3.innerHTML = di;
+                        c4.innerHTML = wi;
+                        to = Number(result[i][2] * DINGUS_PRICE + result[i][3] * WIDGET_PRICE).toFixed(2);
+                        c5.innerHTML = to;
+                        din = din + Number(result[i][2]);
+                        wid = wid + Number(result[i][3]);
+                        total = total + Number(result[i][2] * DINGUS_PRICE + result[i][3] * WIDGET_PRICE);
+                        document.getElementById("dingus").innerHTML = din;
+                        document.getElementById("widget").innerHTML = wid;
+                        document.getElementById("tot").innerHTML = total.toFixed(2);
+
+                        if (id > 2) {
+                            row = [id, result[i][1], di, wi, Number(result[i][2] * DINGUS_PRICE + result[i][3] * WIDGET_PRICE).toFixed(2), din, wid, total];
+                            store.orderHistory.push(row);
+                            localStorage.setItem('orderHistory', JSON.stringify(store));
+                            console.log('orderHistory');
+                        }
+                        counter = counter + 1
+                    }
+                    document.getElementById('button').disabled = true;
+                }
+
+                insert(result);
+                function ok() {
+                    var index = 4;
+                    store = JSON.parse(localStorage['orderHistory']);
+                    let orders = store.orderHistory;
+                    for (i = 0; i < orders.length; i++) {
+                        var row = table.insertRow(index);
+                        var c1 = row.insertCell(0);
+                        var c2 = row.insertCell(1);
+                        var c3 = row.insertCell(2);
+                        var c4 = row.insertCell(3);
+                        var c5 = row.insertCell(4);
+                        c1.innerHTML = orders[i][0];
+                        c1.style.backgroundColor = "#b6b3b3";
+                        c2.innerHTML = orders[i][1];
+                        c3.innerHTML = orders[i][2];
+                        c4.innerHTML = orders[i][3];
+                        c5.innerHTML = orders[i][4];
+                        din = orders[i][5];
+                        wid = orders[i][6];
+                        total = orders[i][7];
+                        document.getElementById("dingus").innerHTML = orders[i][5];
+                        document.getElementById("widget").innerHTML = orders[i][6];
+                        document.getElementById("tot").innerHTML = orders[i][7].toFixed(2);
+                        index = index + 1;
+                    }
+                    counter = orders.length + 4;
+                }
+
+                function push() {
+                    var today = new Date();
+                    var dd = String(today.getDate()).padStart(2, '0');
+                    var mm = String(today.getMonth() + 1).padStart(2, '0');
+                    var yyyy = today.getFullYear();
+                    today = mm + '/' + dd + '/' + yyyy;
+                    num1 = document.getElementById("num1").value;
+                    dingus = dingus + num1;
+                    num2 = document.getElementById("num2").value;
+                    widget = widget + num2;
+                    row = [[0, today, num1, num2, (num1 * DINGUS_PRICE + num2 * WIDGET_PRICE).toFixed(2)]];
+                    insert(row);
+                    document.getElementById("myForm").reset();
+                }
+
+            </script>
+
+            <tfoot>
+                <tr>
+                    <td class="tg-6qw1" colspan="5">©2020 D&W Worldwide.</td>
+                </tr>
+            </tfoot>
+        </table>
+        <br>
+
+        <div class="order">
+            <details>
+                <summary onclick='showDialog()'>Order Form</summary>
+                <dialog id='dialog'></dialog>
+                <hr>
+                <form class=pure-form id="myForm">
+                    <script>
+                        function calc1() {
+                            var v1 = document.getElementById("num1").value;
+                            var d = document.getElementById("dp").value;
+                            document.getElementById("totald").value = v1 * d;
+                            var v2 = document.getElementById("num2").value;
+                            var w = document.getElementById("wp").value;
+                            document.getElementById("tt").value = (v1 * d + parseInt(v2 * 1) * w).toFixed(2);
+                            document.getElementById('button').disabled = false;
+                        }
+
+                        function calc2() {
+                            var v2 = document.getElementById("num2").value;
+                            var w = document.getElementById("wp").value;
+                            document.getElementById("totalw").value = v2 * w;
+                            var v1 = document.getElementById("num1").value;
+                            var d = document.getElementById("dp").value;
+                            document.getElementById("tt").value = (v2 * w + parseInt(v1 * 1) * d).toFixed(2);
+                            document.getElementById('button').disabled = false;
+                        }
+                    </script>
+
+                    <label>
+                        Dingus <input id="num1" value=0 onkeyup="calc1()">
+                    </label>
+                    <label>
+                        @ <input id="dp" value=14.25 readonly="readonly">
+                    </label>
+                    <label>
+                        =$ <input id="totald" value=0.00 onkeyup="calc1()" readonly="readonly">
+                    </label>
+                    <br>
+                    <br>
+                    <label>
+                        Widget <input id="num2" value=0 onkeyup="calc2()">
+                    </label>
+                    <label>
+                        @ <input id="wp" value=9.99 readonly="readonly">
+                    </label>
+                    <label>
+                        =$ <input id="totalw" value=0.00 onkeyup="calc2()" readonly="readonly">
+                    </label>
+                    <br>
+                    <br>
+                    <label>
+                        Total $ <input id="tt" value=0.00 readonly="readonly">
+                    </label>
+                    <br>
+                    <br>
+
+                    <script>
+                        function cancel() {
+                            document.getElementById("myForm").reset();
+                        }
+                    </script>
+
+                    <button class="button-error pure-button" type="button" onclick="cancel()">Cancel</button>
+                    <button class="button-success pure-button" type="button" id="button"
+                        onclick="push();tmd();okk();cancel();insert()" disabled>Order</button>
+                </form>
+            </details>
+            <br>
+            <br>
+        </div>
+    </main>
+</body>
+
+</html>
